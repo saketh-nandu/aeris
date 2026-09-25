@@ -1,6 +1,13 @@
+from pathlib import Path
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from app.config import settings
+
+if settings.DATABASE_URL.startswith("sqlite"):
+    db_path = settings.DATABASE_URL.replace("sqlite:///", "", 1)
+    if db_path.startswith("/"):
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 
 # SQLite requires check_same_thread=False
 connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
