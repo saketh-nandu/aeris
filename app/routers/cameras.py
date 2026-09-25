@@ -106,6 +106,26 @@ async def pair_camera(pair_in: CameraPairRequest, db: Session = Depends(get_db))
     session["camera"] = cam
     return cam
 
+@router.post("/{id}/stream/frame")
+async def upload_camera_frame(id: str, request: Request, db: Session = Depends(get_db)):
+    payload = await request.body()
+    if not payload:
+        raise HTTPException(status_code=400, detail="No camera frame payload received")
+
+    camera_service.store_live_frame(id, payload)
+    cam = camera_service.get_camera_by_id(db, id)
+    if cam:
+        cam.status = "STREAMING"
+        db.commit()
+        db.refresh(cam)
+
+    return {
+        "status": "ok",
+        "camera_id": id,
+        "bytes_received": len(payload),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
 @router.get("/{id}/stream")
 def stream_camera(id: str, db: Session = Depends(get_db)):
     cam = camera_service.get_camera_by_id(db, id)
