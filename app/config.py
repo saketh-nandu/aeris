@@ -7,7 +7,7 @@ class Settings(BaseModel):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "aeris-tactical-secret-key-2026-production")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./aeris.db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:////tmp/aeris.db")
     
     # Emergency Response parameters
     DEFAULT_DISPATCH_RADIUS_METERS: float = 1000.0 # 1 km search radius
